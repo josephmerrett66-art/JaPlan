@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Japan 2026 — Joe &amp; Beth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --ink: #06060a; --ink2: #0f0f1a; --ink3: #18182a; --ink4: #252538;
+  --paper: #f0f0ff; --paper2: #c8c8e8;
+  --muted: #6868a0; --muted2: #9898c0; --muted3: #c0c0d8;
+  --border: #252538;
+  --neon: #c8ff00; --neon2: #00ffd1; --pink: #ff2d7e;
+  --blue: #3b6fff; --purple: #8b3fff; --green: #00c87a; --amber: #ff9500;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:'DM Sans',sans-serif;background:var(--ink);color:var(--paper);
+  min-height:100vh;padding-bottom:110px;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+#bg-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+input,textarea,select,button,label{font-family:'DM Sans',sans-serif;outline:none;-webkit-tap-highlight-color:transparent}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--ink4);border-radius:3px}
+
+/* HERO */
+.hero{position:relative;z-index:10;padding:0 20px;padding-top:max(28px,env(safe-area-inset-top,28px));background:var(--ink);overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--neon),transparent)}
+.hero-inner{max-width:860px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:24px}
+.hero-flag{font-size:44px;line-height:1;display:block;margin-bottom:8px;filter:drop-shadow(0 0 20px rgba(200,255,0,0.4));animation:flagFloat 4s ease-in-out infinite}
+@keyframes flagFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(44px,11vw,84px);font-weight:800;line-height:0.9;letter-spacing:-0.04em;background:linear-gradient(135deg,#fff 0%,var(--neon) 50%,var(--neon2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative}
+.hero-title::after{content:attr(data-text);position:absolute;inset:0;background:linear-gradient(135deg,#fff 0%,var(--neon) 50%,var(--neon2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:blur(18px);opacity:0.35;z-index:-1}
+.hero-sub{margin-top:10px;font-size:12px;color:var(--muted2);letter-spacing:0.02em}
+.hero-sub span{color:var(--muted)}
+.hero-stats{display:flex;flex-direction:column;gap:6px;flex-shrink:0;align-items:flex-end}
+.stat-pill{display:flex;align-items:center;gap:8px;background:var(--ink3);border:1px solid var(--ink4);border-radius:100px;padding:7px 14px;position:relative;overflow:hidden}
+.stat-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,255,0,0.04),transparent)}
+.stat-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.14em;color:var(--muted);text-transform:uppercase}
+.stat-value{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--neon)}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:60;background:rgba(6,6,10,0.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(200,255,0,0.1);padding:0 20px;display:flex}
+.nav-inner{max-width:860px;margin:0 auto;display:flex;align-items:stretch}
+.tab-btn{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.1em;padding:13px 18px;transition:all 0.2s;white-space:nowrap;text-transform:uppercase;position:relative}
+.tab-btn.active{color:var(--neon);border-bottom-color:var(--neon)}
+.tab-btn.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--neon);box-shadow:0 0 12px var(--neon)}
+
+/* TOOLBAR */
+.toolbar{background:var(--ink2);padding:8px 20px;border-bottom:1px solid rgba(255,255,255,0.03);position:relative;z-index:9}
+.toolbar-inner{max-width:860px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.toolbar-btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:0.06em;padding:9px 18px;transition:all 0.2s;text-transform:uppercase;white-space:nowrap;min-height:38px;background:var(--ink3);border:1px solid var(--ink4);color:var(--muted2);position:relative;overflow:hidden}
+.toolbar-btn:active{transform:scale(0.96)}
+.toolbar-btn.primary{background:var(--neon);border-color:var(--neon);color:var(--ink);font-weight:700;box-shadow:0 0 20px rgba(200,255,0,0.2)}
+.filterbar{background:var(--ink2);padding:0 20px 12px;border-bottom:1px solid rgba(255,255,255,0.03);position:relative;z-index:9}
+.filterbar-inner{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1.3fr repeat(3, minmax(110px,1fr)) auto;gap:8px;align-items:center}
+.filter-input,.filter-select{width:100%;background:var(--ink3);border:1px solid var(--ink4);color:var(--paper);border-radius:10px;padding:10px 12px;font-size:12px;min-height:40px}
+.filter-input::placeholder{color:var(--muted)}
+.filter-chip{display:inline-flex;align-items:center;justify-content:center;background:var(--ink3);border:1px solid var(--ink4);color:var(--muted2);border-radius:10px;padding:10px 12px;font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;min-height:40px}
+.filter-summary{max-width:860px;margin:10px auto 0;color:var(--muted2);font-size:11px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.timeline-strip{display:flex;gap:6px;overflow:auto;padding:0 2px 8px;margin-bottom:6px;-webkit-overflow-scrolling:touch}
+.timeline-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);font-size:10px;color:var(--paper2);white-space:nowrap}
+.timeline-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.image-preview{padding:0 13px 12px}
+.image-card{display:block;border-radius:12px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,0.08);background:var(--ink4);text-decoration:none}
+.image-card img{display:block;width:100%;height:180px;object-fit:cover}
+.image-card span{position:absolute;left:10px;bottom:10px;background:rgba(6,6,10,0.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);color:var(--paper);padding:6px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.04em}
+@media(max-width:760px){.filterbar-inner{grid-template-columns:1fr 1fr}.filter-summary{font-size:10px}}
+
+/* TABS */
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:20px 14px;position:relative;z-index:5}
+
+/* DAY CARD */
+.day-card{background:var(--ink2);border-radius:20px;margin-bottom:10px;overflow:hidden;border:1px solid var(--ink4);position:relative;transition:transform 0.2s,box-shadow 0.2s}
+.day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)}
+.day-card.has-entries{border-color:rgba(200,255,0,0.12)}
+.day-card.has-entries:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(200,255,0,0.15)}
+.day-accent{height:2px;background:linear-gradient(90deg,var(--neon),var(--neon2),transparent);opacity:0;transition:opacity 0.3s}
+.day-card.has-entries .day-accent{opacity:1}
+.day-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 14px;cursor:pointer;user-select:none;gap:12px;-webkit-tap-highlight-color:transparent}
+.day-header-left{flex:1;min-width:0}
+.day-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.day-num{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--ink4);color:var(--muted2);border-radius:5px;padding:3px 8px;flex-shrink:0;border:1px solid rgba(255,255,255,0.05)}
+.day-num.populated{background:rgba(200,255,0,0.1);color:var(--neon);border-color:rgba(200,255,0,0.2)}
+.day-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.03em}
+.day-city-input{background:transparent;border:none;color:var(--paper);font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-0.02em;width:100%;line-height:1.2;-webkit-appearance:none}
+.day-city-input::placeholder{color:var(--ink4)}
+.day-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.day-total{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--neon);background:rgba(200,255,0,0.08);border-radius:8px;padding:4px 10px;white-space:nowrap;border:1px solid rgba(200,255,0,0.18);text-shadow:0 0 8px rgba(200,255,0,0.3)}
+.add-btn{width:34px;height:34px;border-radius:50%;background:var(--neon);border:none;color:var(--ink);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;transition:transform 0.15s,box-shadow 0.15s;box-shadow:0 0 12px rgba(200,255,0,0.25)}
+.add-btn:active{transform:scale(0.88) rotate(45deg);box-shadow:0 0 24px rgba(200,255,0,0.5)}
+.collapse-icon{color:var(--muted);font-size:11px;transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0}
+.collapsed .collapse-icon{transform:rotate(-90deg)}
+
+/* DAY BODY */
+.day-body{padding:10px 12px 14px}
+.free-day-msg{text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.16em;color:var(--ink4);text-transform:uppercase;padding:22px 16px}
+
+/* ENTRY ROW */
+.entry-row{background:var(--ink3);border:1px solid var(--ink4);border-radius:14px;margin-bottom:6px;overflow:hidden;transition:border-color 0.2s,transform 0.15s,box-shadow 0.2s;animation:slideIn 0.22s cubic-bezier(0.34,1.56,0.64,1) forwards;position:relative}
+.entry-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cat-color,var(--muted));border-radius:14px 0 0 14px}
+.entry-row:focus-within{border-color:rgba(255,255,255,0.12);box-shadow:0 4px 20px rgba(0,0,0,0.3);transform:scale(1.004)}
+.entry-row.paid-row{background:rgba(0,200,122,0.06);border-color:rgba(0,200,122,0.2)}
+.entry-row.paid-row::before{background:var(--green)}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.entry-top{display:flex;align-items:center;padding:11px 13px 4px;gap:0}
+.entry-mid{padding:5px 13px 4px}
+.entry-bottom{display:flex;align-items:center;padding:5px 13px 11px;gap:0}
+.entry-checks{display:flex;gap:5px;margin-right:10px;flex-shrink:0}
+.check-box{width:24px;height:24px;border-radius:7px;border:1.5px solid var(--ink4);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;background:var(--ink4)}
+.check-box.joe.checked{border-color:var(--blue);background:var(--blue);box-shadow:0 0 12px rgba(59,111,255,0.5);transform:scale(1.1)}
+.check-box.beth.checked{border-color:var(--purple);background:var(--purple);box-shadow:0 0 12px rgba(139,63,255,0.5);transform:scale(1.1)}
+.check-box svg{display:none}.check-box.checked svg{display:block}
+.entry-cat{display:flex;align-items:center;gap:5px;margin-right:10px;flex-shrink:0}
+.cat-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.cat-select{background:transparent;border:none;font-family:'DM Mono',monospace;font-size:8.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;appearance:none;-webkit-appearance:none;color:inherit;max-width:72px}
+.cat-select option{background:#18182a;color:var(--paper)}
+.entry-vdiv{width:1px;height:16px;background:var(--ink4);margin:0 10px;flex-shrink:0}
+.entry-name{width:100%;background:transparent;border:none;color:var(--paper);font-size:14px;font-weight:400;line-height:1.4;-webkit-appearance:none}
+.entry-price-wrap{display:flex;align-items:center;gap:4px;flex:1}
+.price-prefix{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)}
+.entry-price{background:transparent;border:none;color:var(--paper);font-family:'DM Mono',monospace;font-size:15px;font-weight:500;width:100px;-webkit-appearance:none}
+.entry-actions{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
+.paid-badge{display:inline-flex;align-items:center;background:rgba(0,200,122,0.12);border:1px solid rgba(0,200,122,0.25);color:var(--green);border-radius:6px;font-family:'DM Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:0.08em;padding:3px 8px;white-space:nowrap;text-shadow:0 0 8px rgba(0,200,122,0.4)}
+.notes-toggle{background:var(--ink4);border:1px solid rgba(255,255,255,0.05);border-radius:6px;color:var(--muted2);cursor:pointer;font-size:10px;font-weight:500;padding:5px 10px;white-space:nowrap;min-height:28px;transition:all 0.15s}
+.notes-toggle:active{color:var(--neon);border-color:rgba(200,255,0,0.3)}
+.del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;min-width:30px;min-height:30px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.del-btn:active{color:var(--pink);transform:scale(1.3) rotate(15deg)}
+.notes-area{background:transparent;border:none;border-top:1px solid var(--ink4);color:var(--muted2);font-size:13px;font-style:italic;width:100%;resize:none;line-height:1.6;padding:10px 13px;display:none;-webkit-appearance:none}
+.notes-area.visible{display:block;animation:slideIn 0.15s ease}
+
+/* DAY FOOTER */
+.day-footer{display:flex;align-items:center;gap:8px;margin-top:8px;padding:0 2px}
+.legend{display:flex;gap:12px;flex:1;align-items:center}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:7px;height:7px;border-radius:50%}
+.legend-label{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.04em}
+.add-entry-btn{display:flex;align-items:center;gap:5px;background:transparent;border:1px dashed var(--ink4);border-radius:10px;color:var(--muted);cursor:pointer;font-size:12px;font-weight:500;padding:8px 14px;white-space:nowrap;min-height:36px;transition:all 0.2s}
+.add-entry-btn:active{border-color:var(--neon);color:var(--neon);background:rgba(200,255,0,0.04)}
+
+/* SUMMARY BAR */
+.summary-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:env(safe-area-inset-bottom,0px);background:rgba(6,6,10,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid rgba(200,255,0,0.12);box-shadow:0 -20px 60px rgba(0,0,0,0.6)}
+.summary-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--neon),var(--neon2),transparent)}
+.summary-bar::-webkit-scrollbar{display:none}
+.sum-inner{display:flex;align-items:stretch;justify-content:center;min-width:max-content;margin:0 auto}
+.sum-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 16px;gap:3px;flex-shrink:0}
+.sum-divider{width:1px;background:var(--ink4);margin:8px 0;flex-shrink:0}
+.sum-label{font-family:'DM Mono',monospace;font-size:6.5px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+.sum-value{font-family:'DM Mono',monospace;font-size:14px;font-weight:600;white-space:nowrap;color:var(--paper)}
+.sum-value.total{color:var(--neon);text-shadow:0 0 10px rgba(200,255,0,0.3)}
+.sum-value.joe{color:#60a5fa;text-shadow:0 0 10px rgba(59,111,255,0.3)}
+.sum-value.beth{color:#c084fc;text-shadow:0 0 10px rgba(139,63,255,0.3)}
+.sum-value.owed{color:var(--pink);text-shadow:0 0 10px rgba(255,45,126,0.3)}
+.sum-value.bal{font-size:10px;font-family:'DM Sans',sans-serif;font-weight:600}
+.sum-value.sq{color:var(--green);text-shadow:0 0 10px rgba(0,200,122,0.3)}
+.sum-value.amber{color:var(--amber)}
+
+/* TOAST */
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(6px) scale(0.95);background:var(--ink3);color:var(--neon);font-size:13px;font-weight:600;padding:10px 20px;border-radius:100px;border:1px solid rgba(200,255,0,0.25);box-shadow:0 0 30px rgba(200,255,0,0.15),0 8px 24px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.2s,transform 0.25s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;z-index:200;white-space:nowrap;letter-spacing:0.03em}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+
+/* PROMPTS */
+.prompt-main{max-width:860px;margin:0 auto;padding:20px 14px 110px;position:relative;z-index:5}
+.prompt-intro{background:var(--ink2);border-radius:18px;padding:18px 20px;margin-bottom:16px;border:1px solid var(--ink4);font-size:13.5px;color:var(--muted2);line-height:1.7;position:relative;overflow:hidden}
+.prompt-intro::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,255,0,0.2),transparent)}
+.prompt-intro strong{color:var(--paper)}
+.prompt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:540px){.prompt-grid{grid-template-columns:1fr}}
+.prompt-card{background:var(--ink2);border-radius:18px;border:1px solid var(--ink4);overflow:hidden;transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;position:relative}
+.prompt-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent)}
+.prompt-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4);border-color:rgba(200,255,0,0.18)}
+.prompt-card-header{padding:14px 16px 12px;border-bottom:1px solid var(--ink4);display:flex;align-items:flex-start;gap:11px}
+.prompt-icon{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--ink3);border:1px solid var(--ink4)}
+.prompt-card-title{font-size:13px;font-weight:600;color:var(--paper);margin-bottom:3px}
+.prompt-card-desc{font-size:11.5px;color:var(--muted);line-height:1.5}
+.prompt-card-body{padding:12px 16px 14px}
+.prompt-preview{background:var(--ink3);border:1px solid var(--ink4);border-radius:10px;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7;max-height:88px;overflow:hidden;position:relative;margin-bottom:10px;white-space:pre-wrap;word-break:break-word}
+.prompt-preview::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--ink3));pointer-events:none}
+.copy-btn{width:100%;padding:12px;background:var(--ink3);border:1px solid var(--ink4);border-radius:10px;color:var(--muted2);cursor:pointer;font-size:11px;font-weight:600;letter-spacing:0.06em;transition:all 0.2s;min-height:44px;text-transform:uppercase;font-family:'DM Mono',monospace;position:relative;overflow:hidden}
+.copy-btn:active{transform:scale(0.97)}
+.copy-btn.copied{background:rgba(0,200,122,0.12);border-color:rgba(0,200,122,0.3);color:var(--green);text-shadow:0 0 8px rgba(0,200,122,0.4)}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+
+.entry-details{display:none;padding:0 13px 12px;gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--ink4);margin-top:6px;padding-top:10px}
+.entry-details.visible{display:grid;animation:slideIn 0.15s ease}
+.detail-field{display:flex;flex-direction:column;gap:5px}
+.detail-field.full{grid-column:1 / -1}
+.detail-label{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase}
+.detail-input,.detail-select{width:100%;background:var(--ink4);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:9px 10px;color:var(--paper);font-size:12px;-webkit-appearance:none}
+.detail-input::placeholder{color:var(--muted)}
+.links-row{display:flex;gap:6px;flex-wrap:wrap;padding:0 13px 12px}
+.link-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.08);background:var(--ink4);color:var(--paper2);font-size:10px;font-weight:600;letter-spacing:0.04em;text-decoration:none}
+.link-chip:hover{border-color:rgba(200,255,0,0.25);color:var(--neon)}
+.more-toggle{background:transparent;border:1px solid rgba(255,255,255,0.08);border-radius:6px;color:var(--muted2);cursor:pointer;font-size:10px;font-weight:500;padding:5px 10px;white-space:nowrap;min-height:28px;transition:all 0.15s}
+.more-toggle:active{color:var(--neon);border-color:rgba(200,255,0,0.3)}
+.entry-meta-line{padding:0 13px 10px;color:var(--muted2);font-size:11px;display:flex;flex-wrap:wrap;gap:6px}
+.meta-pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.05)}
+@media(max-width:640px){.entry-details{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="hero-flag">&#127471;&#127477;</span>
+      <div class="hero-title" data-text="JAPAN 26">JAPAN 26</div>
+      <div class="hero-sub">Joe &amp; Beth <span>&middot;</span> 25 Apr &ndash; 10 May <span>&middot;</span> 16 days</div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-pill"><span class="stat-label">Planned</span><span class="stat-value" id="hdr-planned">0/16</span></div>
+      <div class="stat-pill"><span class="stat-label">Total</span><span class="stat-value" id="hdr-total">$0</span></div>
+    </div>
+  </div>
+</div>
+<div class="nav">
+  <div class="nav-inner">
+    <button class="tab-btn active" onclick="switchTab('itinerary',this)">&#128197; Itinerary</button>
+    <button class="tab-btn" onclick="switchTab('dayview',this)">&#128269; Day View</button>
+    <button class="tab-btn" onclick="switchTab('prompts',this)">&#10022; Prompt Builder</button>
+  </div>
+</div>
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <button class="toolbar-btn primary" onclick="exportJSON()">&#11015; Export JSON</button>
+    <label class="toolbar-btn" for="import-file" style="cursor:pointer;">&#11014; Import JSON</label>
+    <input type="file" id="import-file" accept=".json" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;z-index:-1;" onchange="importJSON(event)">
+  </div>
+</div>
+<div class="filterbar">
+  <div class="filterbar-inner">
+    <input class="filter-input" id="filter-search" placeholder="Search city, place, notes, tags...">
+    <select class="filter-select" id="filter-status">
+      <option value="">All status</option>
+      <option value="planned">Planned</option>
+      <option value="booked">Booked</option>
+      <option value="done">Done</option>
+      <option value="idea">Idea</option>
+    </select>
+    <select class="filter-select" id="filter-category">
+      <option value="">All categories</option>
+      <option value="activity">Activity</option>
+      <option value="transport">Transport</option>
+      <option value="accommodation">Accommodation</option>
+    </select>
+    <select class="filter-select" id="filter-paid">
+      <option value="">All payment</option>
+      <option value="paid">Paid only</option>
+      <option value="unpaid">Unpaid only</option>
+      <option value="joe">Joe paid</option>
+      <option value="beth">Beth paid</option>
+    </select>
+    <button class="filter-chip" id="clear-filters">Clear</button>
+    <button class="filter-chip" id="closeAllMore">Close More</button>
+  </div>
+  <div class="filter-summary">
+    <span id="filter-summary-text">Showing all entries</span>
+    <span id="filter-match-count"></span>
+  </div>
+</div>
+<div class="tab-panel active" id="tab-itinerary"><div class="main" id="days-container"></div></div>
+<div class="tab-panel" id="tab-dayview">
+  <div class="main">
+    <div class="filters" style="margin-top:0">
+      <div class="filters-row">
+        <select class="filter-select" id="dayview-select"></select>
+        <button class="filter-chip" id="dayview-prev">◀ Prev</button>
+        <button class="filter-chip" id="dayview-next">Next ▶</button>
+      </div>
+      <div class="filter-summary">
+        <span id="dayview-summary-text">Select a day to focus on</span>
+      </div>
+    </div>
+    <div id="dayview-container"></div>
+  </div>
+</div>
+<div class="tab-panel" id="tab-prompts"><div class="prompt-main" id="prompt-main"></div></div>
+<div class="summary-bar">
+  <div class="sum-inner">
+    <div class="sum-item"><div class="sum-label">Total</div><div class="sum-value total" id="sum-total">$0.00</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-label">Joe</div><div class="sum-value joe" id="sum-joe">$0.00</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-label">Beth</div><div class="sum-value beth" id="sum-beth">$0.00</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-label">Owed</div><div class="sum-value owed" id="sum-owed">$0.00</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-label">Balance</div><div class="sum-value bal sq" id="sum-bal">All square &#10003;</div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+
+// Animated background
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  function Particle() {
+    this.reset = function() {
+      this.x = Math.random()*W; this.y = H + 5;
+      this.vx = (Math.random()-0.5)*0.3; this.vy = -(Math.random()*0.4+0.1);
+      this.life = 0; this.maxLife = 150+Math.random()*200;
+      this.size = Math.random()*1.5+0.3;
+      this.color = Math.random()>0.5 ? [200,255,0] : [0,255,209];
+    };
+    this.reset();
+    this.life = Math.floor(Math.random()*this.maxLife);
+  }
+  Particle.prototype.update = function() {
+    this.x+=this.vx; this.y+=this.vy; this.life++;
+    if (this.life>this.maxLife||this.y<-10) this.reset();
+  };
+  Particle.prototype.draw = function() {
+    const a = Math.sin(Math.PI*this.life/this.maxLife)*0.5;
+    ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle = `rgba(${this.color[0]},${this.color[1]},${this.color[2]},${a})`; ctx.fill();
+  };
+  for (let i=0;i<50;i++) { const p = new Particle(); p.life=Math.floor(Math.random()*p.maxLife); particles.push(p); }
+  function loop() { ctx.clearRect(0,0,W,H); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(loop); }
+  window.addEventListener('resize', resize); resize(); loop();
+})();
+
+
+
+// ── Config ──────────────────────────────────────────────────────────────────
+const TRIP_START  = new Date('2026-04-25');
+const TOTAL_DAYS  = 16;
+const STORAGE_KEY = 'japan-planner-v4';
+
+const WEEKDAYS  = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const WEEKDAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+const DAYS = Array.from({ length: TOTAL_DAYS }, (_, i) => {
+  const d = new Date(TRIP_START);
+  d.setDate(d.getDate() + i);
+  const wd = d.getDay(), day = d.getDate(), mo = d.getMonth(), yr = d.getFullYear();
+  return {
+    index:   i,
+    short:   WEEKDAYS[wd],
+    dayNum:  day,
+    month:   MONTHS[mo],
+    full:    WEEKDAYS_FULL[wd] + ', ' + day + ' ' + MONTHS_FULL[mo],
+    display: (day + ' ' + MONTHS_FULL[mo] + ' ' + yr).toUpperCase(),
+  };
+});
+
+const CATS = {
+  transport:     { label: 'Transport', color: '#3b82f6' },
+  accommodation: { label: 'Stay',      color: '#8b5cf6' },
+  activity:      { label: 'Activity',  color: '#10b981' },
+};
+
+// ── State ───────────────────────────────────────────────────────────────────
+let state = { days: DAYS.map(d => ({ index: d.index, city: '', entries: [], _collapsed: false })) };
+let filters = { search: '', status: '', category: '', paid: '' };
+
+const uid = () => Math.random().toString(36).slice(2);
+const fmt = n  => `$${(+n || 0).toFixed(2)}`;
+const esc = s  => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+const defaultEntry = () => ({
+  id: uid(), category: 'activity', name: '', price: '', joePaid: false, bethPaid: false, notes: '',
+  insight: null, insightLoading: false, startTime: '', endTime: '', durationMinutes: '',
+  address: '', googleMaps: '', website: '', bookingLink: '', image: '', status: '',
+  bestTimeToVisit: '', actualPrice: '', tags: '', rating: '', crowdLevel: ''
+});
+function normalizeEntry(entry={}) {
+  const base = defaultEntry();
+  return { ...base, ...entry, id: entry.id || base.id };
+}
+function normalizeDay(day={}) {
+  return {
+    index: typeof day.index === 'number' ? day.index : 0,
+    city: day.city || '',
+    entries: Array.isArray(day.entries) ? day.entries.map(normalizeEntry) : [],
+    _collapsed: !!day._collapsed
+  };
+}
+function normalizeImportedState(parsed) {
+  const next = { days: DAYS.map(d => ({ index: d.index, city: '', entries: [], _collapsed: false })) };
+  if (parsed && Array.isArray(parsed.days)) {
+    parsed.days.forEach(saved => {
+      const idx = next.days.findIndex(d => d.index === saved.index);
+      if (idx !== -1) next.days[idx] = normalizeDay({ ...next.days[idx], ...saved });
+    });
+  }
+  return next;
+}
+
+// ── Persistence ─────────────────────────────────────────────────────────────
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) {
+      const parsed = JSON.parse(s);
+      if (parsed.days) {
+        parsed.days.forEach(saved => {
+          const idx = state.days.findIndex(d => d.index === saved.index);
+          if (idx !== -1) state.days[idx] = normalizeDay({ ...state.days[idx], ...saved });
+        });
+      }
+    }
+  } catch {}
+}
+
+// ── Export / Import ──────────────────────────────────────────────────────────
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'japan-trip-2026.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('✓ Exported successfully');
+}
+function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (parsed.days && Array.isArray(parsed.days)) {
+        state = normalizeImportedState(parsed);
+        saveState();
+        render();
+        showToast('✓ Imported successfully');
+      } else {
+        showToast('⚠ Invalid file format');
+      }
+    } catch { showToast('⚠ Could not parse file'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function getDay(i)    { return state.days.find(d => d.index === i); }
+function setDay(day)  { state.days = state.days.map(d => d.index === day.index ? day : d); saveState(); }
+function getEntry(di, eid) { return getDay(di).entries.find(e => e.id === eid); }
+function setEntry(di, entry) {
+  const day = getDay(di);
+  day.entries = day.entries.map(e => e.id === entry.id ? entry : e);
+  setDay(day);
+}
+
+function timeToMinutes(t) {
+  if (!t || !/^\d{1,2}:\d{2}$/.test(String(t).trim())) return Number.POSITIVE_INFINITY;
+  const [h,m] = String(t).split(':').map(Number);
+  return h*60 + m;
+}
+function entryMatchesFilters(entry, day) {
+  const searchBlob = [day.city, entry.name, entry.notes, entry.tags, entry.address, entry.status, entry.bestTimeToVisit].join(' ').toLowerCase();
+  if (filters.search && !searchBlob.includes(filters.search.toLowerCase())) return false;
+  if (filters.status && (entry.status || '') !== filters.status) return false;
+  if (filters.category && (entry.category || '') !== filters.category) return false;
+  if (filters.paid === 'paid' && !(entry.joePaid || entry.bethPaid)) return false;
+  if (filters.paid === 'unpaid' && (entry.joePaid || entry.bethPaid)) return false;
+  if (filters.paid === 'joe' && !entry.joePaid) return false;
+  if (filters.paid === 'beth' && !entry.bethPaid) return false;
+  return true;
+}
+function filteredEntries(day) {
+  return day.entries.filter(e => entryMatchesFilters(e, day));
+}
+function activeFilterCount(){ return Object.values(filters).filter(Boolean).length; }
+function updateFilterSummary(){
+  const visibleEntries = state.days.reduce((n,d)=>n+filteredEntries(d).length,0);
+  const active = activeFilterCount();
+  document.getElementById('filter-summary-text').textContent = active ? `Filters active: ${active}` : 'Showing all entries';
+  document.getElementById('filter-match-count').textContent = `${visibleEntries} visible entr${visibleEntries===1?'y':'ies'}`;
+}
+
+
+let selectedDayIndex = 0;
+
+function ensureSelectedDayValid() {
+  if (!state.days.length) { selectedDayIndex = 0; return; }
+  const exists = state.days.some(d => d.index === selectedDayIndex);
+  if (!exists) selectedDayIndex = state.days[0].index;
+}
+
+function populateDayViewSelect() {
+  ensureSelectedDayValid();
+  const sel = document.getElementById('dayview-select');
+  if (!sel) return;
+  sel.innerHTML = '';
+  state.days.forEach(day => {
+    const info = DAYS[day.index] || { display: `Day ${day.index + 1}` };
+    const opt = document.createElement('option');
+    opt.value = String(day.index);
+    opt.textContent = `Day ${day.index + 1} — ${day.city || 'Untitled'} — ${info.display}`;
+    if (day.index === selectedDayIndex) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function renderDayView() {
+  ensureSelectedDayValid();
+  populateDayViewSelect();
+  const wrap = document.getElementById('dayview-container');
+  const summary = document.getElementById('dayview-summary-text');
+  if (!wrap || !summary) return;
+  wrap.innerHTML = '';
+  const day = getDay(selectedDayIndex);
+  if (!day) {
+    summary.textContent = 'No day selected';
+    return;
+  }
+  const info = DAYS[selectedDayIndex] || { display: `Day ${selectedDayIndex + 1}` };
+  summary.textContent = `${day.city || 'Untitled'} • ${info.display} • ${filteredEntries(day).length} visible entr${filteredEntries(day).length===1?'y':'ies'}`;
+  wrap.appendChild(buildDayCard(selectedDayIndex));
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+function render() {
+  const container = document.getElementById('days-container');
+  container.innerHTML = '';
+  state.days.forEach(day => container.appendChild(buildDayCard(day.index)));
+  renderDayView();
+  updateSummary();
+  updateFilterSummary();
+}
+
+function refreshDayCard(di) {
+  const container = document.getElementById('days-container');
+  const old = document.getElementById(`day-${di}`);
+  if (old) container.replaceChild(buildDayCard(di), old);
+  renderDayView();
+  updateSummary();
+}
+
+// ── Day card ──────────────────────────────────────────────────────────────────
+function buildDayCard(di) {
+  const day  = getDay(di);
+  const info = DAYS[di];
+  const visibleEntries = filteredEntries(day);
+  const total = visibleEntries.reduce((s, e) => s + (+e.price || 0), 0);
+  const collapsed = !!day._collapsed;
+
+  const hasEntries = visibleEntries.length > 0;
+  const card = document.createElement('div');
+  card.className = 'day-card' + (collapsed ? ' collapsed' : '') + (hasEntries ? ' has-entries' : '');
+  card.id = `day-${di}`;
+  if (activeFilterCount() && visibleEntries.length === 0 && !String(day.city||'').toLowerCase().includes(filters.search.toLowerCase())) card.style.display = 'none';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'day-header';
+  hdr.innerHTML = `
+    <div class="day-header-left">
+      <div class="day-meta">
+        <span class="day-num">Day ${di + 1}</span>
+        <span class="day-date">${info.display}</span>
+      </div>
+      <input class="day-city-input" placeholder="City or area..." value="${esc(day.city)}" />
+    </div>
+    <div class="day-header-right">
+      ${total > 0 ? `<div class="day-total">${fmt(total)}</div>` : ''}
+      <button class="add-btn" title="Add entry">+</button>
+      <div class="collapse-icon">▾</div>
+    </div>`;
+
+  // accent bar
+  const accent = document.createElement('div');
+  accent.className = 'day-accent';
+  card.appendChild(hdr);
+  card.appendChild(accent);
+  // skip normal append below
+  hdr.querySelector('.day-city-input').addEventListener('click', e => e.stopPropagation());
+  hdr.querySelector('.day-city-input').addEventListener('input', e => {
+    const d = getDay(di); d.city = e.target.value; setDay(d); updateSummary();
+  });
+  hdr.querySelector('.add-btn').addEventListener('click', e => {
+    e.stopPropagation(); addEntry(di);
+  });
+  hdr.addEventListener('click', () => toggleCollapse(di));
+  const body = document.createElement('div');
+  body.className = 'day-body';
+  body.id = `day-body-${di}`;
+  body.style.display = collapsed ? 'none' : 'block';
+
+  if (visibleEntries.length === 0) {
+    body.innerHTML = activeFilterCount() ? '<div class="free-day-msg">No entries match these filters</div>' : '<div class="free-day-msg">Free day — nothing planned yet</div>';
+  } else {
+    const timelineEntries = [...visibleEntries].sort((a,b)=>timeToMinutes(a.startTime)-timeToMinutes(b.startTime));
+    const tl = document.createElement('div');
+    tl.className = 'timeline-strip';
+    tl.innerHTML = timelineEntries.map(entry => `<span class="timeline-pill"><span class="timeline-dot" style="background:${(CATS[entry.category] || CATS.activity).color}"></span>${esc(entry.startTime || 'Anytime')} · ${esc(entry.name || '(unnamed)')}</span>`).join('');
+    body.appendChild(tl);
+    visibleEntries.forEach(entry => body.appendChild(buildEntryRow(di, entry.id)));
+  }
+
+  const footer = document.createElement('div');
+  footer.className = 'day-footer';
+  footer.innerHTML = `
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div><span class="legend-label">Joe</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div><span class="legend-label">Beth</span></div>
+    </div>
+    <button class="add-entry-btn" id="add-footer-${di}">+ Add entry</button>`;
+  footer.querySelector(`#add-footer-${di}`).addEventListener('click', () => addEntry(di));
+  body.appendChild(footer);
+  card.appendChild(body);
+  return card;
+}
+
+// ── Entry row ─────────────────────────────────────────────────────────────────
+
+function buildEntryRow(di, eid) {
+  const entry  = getEntry(di, eid);
+  const cat    = CATS[entry.category] || CATS.activity;
+  const isPaid = entry.joePaid || entry.bethPaid;
+  const notesVisible = !!(entry.notes && String(entry.notes).trim());
+  const detailsVisible = !!(entry.startTime || entry.endTime || entry.status || entry.actualPrice || entry.bestTimeToVisit || entry.address || entry.googleMaps || entry.website || entry.bookingLink || entry.tags || entry.image || entry.rating || entry.crowdLevel);
+
+  const row = document.createElement('div');
+  row.className = 'entry-row' + (isPaid ? ' paid-row' : '');
+  row.style.setProperty('--cat-color', cat.color);
+  row.id = `entry-${eid}`;
+
+  const main = document.createElement('div');
+  main.className = 'entry-main-wrap';
+  main.innerHTML = `
+    <div class="entry-top">
+      <div class="entry-checks">
+        <div class="check-box joe ${entry.joePaid ? 'checked':''}" data-who="joe" title="Joe paid">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="check-box beth ${entry.bethPaid ? 'checked':''}" data-who="beth" title="Beth paid">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="entry-cat">
+        <div class="cat-dot" style="background:${cat.color}"></div>
+        <select class="cat-select" style="color:${cat.color}">
+          ${Object.entries(CATS).map(([k,v])=>`<option value="${k}"${entry.category===k?' selected':''}>${v.label}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="entry-mid">
+      <input class="entry-name" placeholder="Description..." value="${esc(entry.name)}" />
+    </div>
+    <div class="entry-bottom">
+      <div class="entry-price-wrap">
+        <span class="price-prefix">A$</span>
+        <input class="entry-price" type="number" min="0" step="0.01" placeholder="0.00" value="${entry.price||''}">
+      </div>
+      <div class="entry-actions">
+        ${isPaid ? '<span class="paid-badge">✓ paid</span>' : ''}
+        <button class="more-toggle">${detailsVisible ? '− more' : '+ more'}</button>
+        <button class="notes-toggle">${notesVisible ? '− notes' : '+ notes'}</button>
+        <button class="del-btn" title="Remove">×</button>
+      </div>
+    </div>`;
+
+  main.querySelectorAll('.check-box').forEach(cb => {
+    cb.addEventListener('click', () => {
+      const e = getEntry(di, eid);
+      const field = cb.dataset.who === 'joe' ? 'joePaid' : 'bethPaid';
+      e[field] = !e[field];
+      setEntry(di, e);
+      refreshDayCard(di);
+      updateSummary();
+    });
+  });
+
+  main.querySelector('.cat-select').addEventListener('change', ev => {
+    const e = getEntry(di, eid); e.category = ev.target.value; setEntry(di, e);
+    refreshDayCard(di);
+  });
+
+  main.querySelector('.entry-name').addEventListener('input', ev => {
+    const e = getEntry(di, eid); e.name = ev.target.value; setEntry(di, e); updateSummary();
+  });
+
+  main.querySelector('.entry-price').addEventListener('input', ev => {
+    const e = getEntry(di, eid); e.price = ev.target.value; setEntry(di, e); updateSummary();
+  });
+
+  row.appendChild(main);
+
+  const meta = document.createElement('div');
+  meta.className = 'entry-meta-line';
+  const metaBits = [];
+  if (entry.startTime || entry.endTime) metaBits.push(`<span class="meta-pill">⏱ ${esc([entry.startTime, entry.endTime].filter(Boolean).join('–'))}</span>`);
+  if (entry.status) metaBits.push(`<span class="meta-pill">📌 ${esc(entry.status)}</span>`);
+  if (entry.bestTimeToVisit) metaBits.push(`<span class="meta-pill">🌤 ${esc(entry.bestTimeToVisit)}</span>`);
+  if (entry.tags) metaBits.push(`<span class="meta-pill">🏷 ${esc(entry.tags)}</span>`);
+  if (entry.actualPrice) metaBits.push(`<span class="meta-pill">💸 actual A$${esc(entry.actualPrice)}</span>`);
+  meta.innerHTML = metaBits.join('');
+  if (metaBits.length) row.appendChild(meta);
+
+  const links = document.createElement('div');
+  links.className = 'links-row';
+  const linkBits = [];
+  if (entry.googleMaps) linkBits.push(`<a class="link-chip" href="${esc(entry.googleMaps)}" target="_blank" rel="noopener noreferrer">📍 Maps</a>`);
+  if (entry.website) linkBits.push(`<a class="link-chip" href="${esc(entry.website)}" target="_blank" rel="noopener noreferrer">🌐 Website</a>`);
+  if (entry.bookingLink) linkBits.push(`<a class="link-chip" href="${esc(entry.bookingLink)}" target="_blank" rel="noopener noreferrer">🎟 Booking</a>`);
+  if (entry.image) linkBits.push(`<a class="link-chip" href="${esc(entry.image)}" target="_blank" rel="noopener noreferrer">🖼 Image</a>`);
+  links.innerHTML = linkBits.join('');
+  if (linkBits.length) row.appendChild(links);
+
+  if (entry.image) {
+    const preview = document.createElement('div');
+    preview.className = 'image-preview';
+    preview.innerHTML = `<a class="image-card" href="${esc(entry.image)}" target="_blank" rel="noopener noreferrer"><img src="${esc(entry.image)}" alt="${esc(entry.name || 'Entry image')}" loading="lazy"><span>Open image</span></a>`;
+    row.appendChild(preview);
+  }
+
+  const details = document.createElement('div');
+  details.className = 'entry-details' + (detailsVisible ? ' visible' : '');
+  details.innerHTML = `
+    <div class="detail-field"><span class="detail-label">Start time</span><input class="detail-input" data-field="startTime" placeholder="10:00" value="${esc(entry.startTime || '')}"></div>
+    <div class="detail-field"><span class="detail-label">End time</span><input class="detail-input" data-field="endTime" placeholder="12:30" value="${esc(entry.endTime || '')}"></div>
+    <div class="detail-field"><span class="detail-label">Status</span><select class="detail-select" data-field="status">
+      <option value="" ${!entry.status ? 'selected' : ''}>Not set</option>
+      <option value="planned" ${entry.status==='planned' ? 'selected' : ''}>Planned</option>
+      <option value="booked" ${entry.status==='booked' ? 'selected' : ''}>Booked</option>
+      <option value="done" ${entry.status==='done' ? 'selected' : ''}>Done</option>
+      <option value="idea" ${entry.status==='idea' ? 'selected' : ''}>Idea</option>
+    </select></div>
+    <div class="detail-field"><span class="detail-label">Actual price</span><input class="detail-input" data-field="actualPrice" type="number" min="0" step="0.01" placeholder="0.00" value="${esc(entry.actualPrice || '')}"></div>
+    <div class="detail-field full"><span class="detail-label">Address</span><input class="detail-input" data-field="address" placeholder="Street / area / station" value="${esc(entry.address || '')}"></div>
+    <div class="detail-field"><span class="detail-label">Best time</span><input class="detail-input" data-field="bestTimeToVisit" placeholder="Morning / sunset" value="${esc(entry.bestTimeToVisit || '')}"></div>
+    <div class="detail-field"><span class="detail-label">Crowd level</span><input class="detail-input" data-field="crowdLevel" placeholder="Busy / moderate" value="${esc(entry.crowdLevel || '')}"></div>
+    <div class="detail-field full"><span class="detail-label">Tags</span><input class="detail-input" data-field="tags" placeholder="food, view, night" value="${esc(entry.tags || '')}"></div>
+    <div class="detail-field full"><span class="detail-label">Google Maps link</span><input class="detail-input" data-field="googleMaps" placeholder="https://..." value="${esc(entry.googleMaps || '')}"></div>
+    <div class="detail-field full"><span class="detail-label">Website link</span><input class="detail-input" data-field="website" placeholder="https://..." value="${esc(entry.website || '')}"></div>
+    <div class="detail-field full"><span class="detail-label">Booking link</span><input class="detail-input" data-field="bookingLink" placeholder="https://..." value="${esc(entry.bookingLink || '')}"></div>
+    <div class="detail-field full"><span class="detail-label">Image link</span><input class="detail-input" data-field="image" placeholder="https://..." value="${esc(entry.image || '')}"></div>
+    <div class="detail-field"><span class="detail-label">Rating</span><input class="detail-input" data-field="rating" type="number" min="0" max="5" step="0.5" placeholder="4.5" value="${esc(entry.rating || '')}"></div>
+    <div class="detail-field"><span class="detail-label">Duration mins</span><input class="detail-input" data-field="durationMinutes" type="number" min="0" step="1" placeholder="90" value="${esc(entry.durationMinutes || '')}"></div>`;
+  row.appendChild(details);
+
+  details.querySelectorAll('[data-field]').forEach(input => {
+    input.addEventListener('input', ev => {
+      const e = getEntry(di, eid);
+      e[ev.target.dataset.field] = ev.target.value;
+      setEntry(di, e);
+      updateSummary();
+    });
+    input.addEventListener('change', ev => {
+      const e = getEntry(di, eid);
+      e[ev.target.dataset.field] = ev.target.value;
+      setEntry(di, e);
+      refreshDayCard(di);
+    });
+  });
+
+  main.querySelector('.more-toggle').addEventListener('click', () => {
+    const isOpening = !details.classList.contains('visible');
+
+    document.querySelectorAll('.entry-details.visible').forEach(panel => {
+      panel.classList.remove('visible');
+    });
+    document.querySelectorAll('.more-toggle').forEach(btn => {
+      btn.textContent = '+ more';
+    });
+
+    if (isOpening) {
+      details.classList.add('visible');
+      main.querySelector('.more-toggle').textContent = '− more';
+    } else {
+      details.classList.remove('visible');
+      main.querySelector('.more-toggle').textContent = '+ more';
+    }
+  });
+
+  main.querySelector('.notes-toggle').addEventListener('click', () => {
+    const na = row.querySelector('.notes-area');
+    const visible = na.classList.toggle('visible');
+    main.querySelector('.notes-toggle').textContent = visible ? '− notes' : '+ notes';
+  });
+
+  main.querySelector('.del-btn').addEventListener('click', () => {
+    row.style.transition = 'all 0.2s';
+    row.style.transform = 'scale(0.95) translateX(8px)';
+    row.style.opacity = '0';
+    setTimeout(() => {
+      const d = getDay(di);
+      d.entries = d.entries.filter(e => e.id !== eid);
+      setDay(d); refreshDayCard(di); updateSummary();
+    }, 180);
+  });
+
+  const na = document.createElement('textarea');
+  na.className = 'notes-area' + (notesVisible ? ' visible' : '');
+  na.rows = 2;
+  na.placeholder = 'Notes, booking ref, confirmation number...';
+  na.value = entry.notes || '';
+  na.addEventListener('input', ev => {
+    const e = getEntry(di, eid); e.notes = ev.target.value; setEntry(di, e);
+  });
+  row.appendChild(na);
+
+  return row;
+}
+
+// ── Interactions ──────────────────────────────────────────────────────────────
+function toggleCollapse(di) {
+  const day = getDay(di);
+  day._collapsed = !day._collapsed;
+  setDay(day);
+  const card = document.getElementById(`day-${di}`);
+  const body = document.getElementById(`day-body-${di}`);
+  card.classList.toggle('collapsed', day._collapsed);
+  body.style.display = day._collapsed ? 'none' : 'block';
+}
+
+function addEntry(di) {
+  const day = getDay(di);
+  if (day._collapsed) { day._collapsed = false; setDay(day); }
+  day.entries.push(defaultEntry());
+  setDay(day);
+  refreshDayCard(di);
+  updateSummary();
+}
+
+// ── Summary ───────────────────────────────────────────────────────────────────
+function updateSummary() {
+  const all   = state.days.flatMap(d => d.entries);
+  const total = all.reduce((s, e) => s + (+e.price || 0), 0);
+  const joe   = all.filter(e => e.joePaid).reduce((s, e) => s + (+e.price || 0), 0);
+  const beth  = all.filter(e => e.bethPaid).reduce((s, e) => s + (+e.price || 0), 0);
+  const owed  = Math.max(0, total - joe - beth);
+  const diff  = joe - beth;
+  const bal   = diff === 0
+    ? 'All square ✓'
+    : diff > 0 ? `Beth owes Joe ${fmt(Math.abs(diff) / 2)}`
+    : `Joe owes Beth ${fmt(Math.abs(diff) / 2)}`;
+  const planned = state.days.filter(d => d.entries.length > 0).length;
+
+  document.getElementById('sum-total').textContent   = fmt(total);
+  document.getElementById('sum-joe').textContent     = fmt(joe);
+  document.getElementById('sum-beth').textContent    = fmt(beth);
+  document.getElementById('sum-owed').textContent    = fmt(owed);
+  document.getElementById('hdr-planned').textContent = `${planned}/${TOTAL_DAYS}`;
+  document.getElementById('hdr-total').textContent   = fmt(total);
+
+  const balEl = document.getElementById('sum-bal');
+  balEl.textContent = bal;
+  balEl.className   = `sum-value bal ${diff === 0 ? 'sq' : 'amber'}`;
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'prompts') renderPrompts();
+}
+
+// ── Prompt builder ────────────────────────────────────────────────────────────
+function buildTripSummary() {
+  const lines = [];
+  state.days.forEach(day => {
+    const info = DAYS[day.index];
+    const entries = day.entries.map(e =>
+      `    - [${(CATS[e.category] || CATS.activity).label}] ${e.name || '(unnamed)'}${e.price ? ' — A$' + e.price : ''}${e.joePaid || e.bethPaid ? ' ✓ paid by ' + (e.joePaid ? 'Joe' : '') + (e.bethPaid ? (e.joePaid ? ' & ' : '') + 'Beth' : '') : ''}`
+    ).join('\n');
+    lines.push(`Day ${day.index + 1} — ${info.full}${day.city ? ' (' + day.city + ')' : ' (city TBD)'}\n${entries || '    (nothing planned yet)'}`);
+  });
+  return lines.join('\n\n');
+}
+
+function buildCurrentJSON() {
+  return JSON.stringify(state, null, 2);
+}
+
+const PROMPTS = [
+  {
+    icon: '🗓️', iconBg: '#dbeafe',
+    title: 'Fill in empty days',
+    desc: 'Suggests activities, transport and accommodation for days with nothing planned yet.',
+    build: () => `You are a Japan travel expert helping plan a trip for two people (Joe & Beth) travelling from Melbourne, Australia.
+
+Here is their current itinerary as JSON:
+${buildCurrentJSON()}
+
+Please fill in sensible activities, accommodation, and transport entries for any days that currently have no entries. Keep suggestions realistic, well-paced, and budget-conscious. For each new entry use this exact structure within the relevant day's "entries" array:
+{"id":"UNIQUE_ID","category":"activity|transport|accommodation","name":"...","price":"AUD amount as number","joePaid":false,"bethPaid":false,"notes":"any useful tip"}
+
+Return the COMPLETE updated JSON only — no explanation, no markdown fences. The JSON must be valid and match the same structure as the input.`
+  },
+  {
+    icon: '💰', iconBg: '#dcfce7',
+    title: 'Estimate missing prices',
+    desc: 'Fills in realistic AUD price estimates for any entries that are missing a price.',
+    build: () => `You are a Japan travel expert. Below is a trip itinerary JSON for Joe & Beth travelling from Melbourne.
+
+${buildCurrentJSON()}
+
+For every entry where "price" is empty or "0", fill in a realistic estimated price in AUD based on typical costs in Japan in 2026. Do not change any other fields. Return the COMPLETE updated JSON only — no explanation, no markdown fences.`
+  },
+  {
+    icon: '🚅', iconBg: '#f3e8ff',
+    title: 'Add transport between cities',
+    desc: 'Adds Shinkansen, bus or flight entries between each city change in the itinerary.',
+    build: () => `You are a Japan travel expert. Here is a trip itinerary for Joe & Beth:
+
+${buildTripSummary()}
+
+Full JSON:
+${buildCurrentJSON()}
+
+Look at the city changes across the trip and add realistic transport entries (Shinkansen, highway bus, domestic flight, etc.) on the appropriate travel days. Include estimated AUD prices. Return the COMPLETE updated JSON only — no explanation, no markdown fences.`
+  },
+  {
+    icon: '🏨', iconBg: '#fed7aa',
+    title: 'Add accommodation for all nights',
+    desc: 'Adds a hotel or ryokan stay entry for every night that doesn\'t have one.',
+    build: () => `You are a Japan travel expert. Here is Joe & Beth\'s trip itinerary:
+
+${buildTripSummary()}
+
+Full JSON:
+${buildCurrentJSON()}
+
+For any day that doesn\'t already have an accommodation entry, add a suitable hotel or ryokan recommendation with a realistic AUD price for that city. Return the COMPLETE updated JSON only — no explanation, no markdown fences.`
+  },
+  {
+    icon: '🍜', iconBg: '#fef08a',
+    title: 'Add food & dining experiences',
+    desc: 'Suggests must-try restaurants, food markets and dining experiences for each city.',
+    build: () => `You are a Japan food and travel expert. Here is Joe & Beth\'s itinerary:
+
+${buildTripSummary()}
+
+Full JSON:
+${buildCurrentJSON()}
+
+Add 1-2 dining or food experience entries per day (e.g. ramen, izakaya, tsukiji market, conveyor belt sushi) that are well-suited to each city. Include realistic AUD price estimates per person x2. Return the COMPLETE updated JSON only — no explanation, no markdown fences.`
+  },
+  {
+    icon: '✂️', iconBg: '#fbcfe8',
+    title: 'Trim & optimise the schedule',
+    desc: 'Removes duplicates, reorders entries logically and flags anything that looks over-scheduled.',
+    build: () => `You are a Japan travel expert reviewing an itinerary for Joe & Beth.
+
+${buildTripSummary()}
+
+Full JSON:
+${buildCurrentJSON()}
+
+Please:
+1. Remove any obvious duplicate entries
+2. Reorder entries within each day so they flow logically (transport first, accommodation last, activities in between)
+3. Flag any days that look over-scheduled in the "notes" field of the first entry
+4. Do not add or remove entries otherwise
+
+Return the COMPLETE updated JSON only — no explanation, no markdown fences.`
+  },
+  {
+    icon: '📋', iconBg: '#bae6fd',
+    title: 'Generate a packing list',
+    desc: 'Creates a packing list based on your activities, cities and the time of year.',
+    build: () => `You are a Japan travel expert. Based on this itinerary for Joe & Beth travelling in late April to early May 2026:
+
+${buildTripSummary()}
+
+Generate a practical packing list grouped by category (Clothing, Documents, Electronics, Toiletries, Japan-specific items, etc.). Consider the weather (spring, cherry blossom season), the activities planned, and that they are flying from Melbourne.
+
+Return as a clean plain-text list — no JSON needed for this one. Just the packing list, ready to copy.`
+  },
+  {
+    icon: '📝', iconBg: '#e2e8f0',
+    title: 'Custom prompt',
+    desc: 'Write your own instruction. Your current trip data will be appended automatically.',
+    custom: true,
+    build: (custom) => `${custom || '[Your instruction here]'}
+
+Here is the current trip JSON for context:
+${buildCurrentJSON()}
+
+Return the COMPLETE updated JSON only — no explanation, no markdown fences.`
+  },
+];
+
+function renderPrompts() {
+  const el = document.getElementById('prompt-main');
+  el.innerHTML = '';
+
+  const intro = document.createElement('div');
+  intro.className = 'prompt-intro';
+  intro.innerHTML = `<strong>How it works:</strong> Each prompt below is pre-loaded with your current trip data. Tap <strong>Copy Prompt</strong>, paste it into any AI (ChatGPT, Claude, Gemini etc.), and it returns an updated JSON you can import back with the <strong>Import</strong> button.`;
+  el.appendChild(intro);
+
+  const grid = document.createElement('div');
+  grid.className = 'prompt-grid';
+
+  PROMPTS.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'prompt-card';
+
+    let customTextarea = '';
+    if (p.custom) {
+      customTextarea = `<textarea id="custom-prompt-text" placeholder="e.g. Add a day trip to Nikko on day 5..." style="width:100%;background:var(--gray6);border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;color:var(--dark);resize:vertical;min-height:80px;font-family:'DM Sans',sans-serif;margin-bottom:12px;outline:none;-webkit-appearance:none;"></textarea>`;
+    }
+
+    card.innerHTML = `
+      <div class="prompt-card-header">
+        <div class="prompt-icon" style="background:${p.iconBg}">${p.icon}</div>
+        <div>
+          <div class="prompt-card-title">${p.title}</div>
+          <div class="prompt-card-desc">${p.desc}</div>
+        </div>
+      </div>
+      <div class="prompt-card-body">
+        ${p.custom ? customTextarea : `<div class="prompt-preview" id="preview-${i}">${esc(p.build().substring(0, 280))}</div>`}
+        <button class="copy-btn" id="copy-btn-${i}">Copy Prompt</button>
+      </div>`;
+
+    card.querySelector(`#copy-btn-${i}`).addEventListener('click', function() {
+      const text = p.custom
+        ? p.build(document.getElementById('custom-prompt-text')?.value || '')
+        : p.build();
+      navigator.clipboard.writeText(text).then(() => {
+        this.textContent = '✓ Copied!';
+        this.classList.add('copied');
+        setTimeout(() => { this.textContent = 'Copy Prompt'; this.classList.remove('copied'); }, 2000);
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+        this.textContent = '✓ Copied!'; this.classList.add('copied');
+        setTimeout(() => { this.textContent = 'Copy Prompt'; this.classList.remove('copied'); }, 2000);
+      });
+    });
+
+    grid.appendChild(card);
+  });
+
+  el.appendChild(grid);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  try {
+    loadState();
+    render();
+  } catch(e) {
+    console.error('Init error:', e);
+    document.getElementById('days-container').innerHTML =
+      '<div style="padding:40px;text-align:center;color:#94a3b8;font-family:monospace;font-size:13px">Error loading planner: ' + e.message + '</div>';
+  }
+});
+
+
+</script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const closeBtn = document.getElementById("closeAllMore");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", function(){
+      document.querySelectorAll(".entry-details.visible").forEach(el => el.classList.remove("visible"));
+      document.querySelectorAll(".more-toggle").forEach(btn => btn.textContent = "+ more");
+    });
+  }
+});
+</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const sel = document.getElementById('dayview-select');
+  const prev = document.getElementById('dayview-prev');
+  const next = document.getElementById('dayview-next');
+
+  if (sel) {
+    sel.addEventListener('change', function(){
+      selectedDayIndex = +this.value;
+      renderDayView();
+    });
+  }
+
+  if (prev) {
+    prev.addEventListener('click', function(){
+      if (!state.days.length) return;
+      const indices = state.days.map(d => d.index).sort((a,b)=>a-b);
+      const pos = Math.max(0, indices.indexOf(selectedDayIndex));
+      selectedDayIndex = indices[Math.max(0, pos - 1)];
+      renderDayView();
+    });
+  }
+
+  if (next) {
+    next.addEventListener('click', function(){
+      if (!state.days.length) return;
+      const indices = state.days.map(d => d.index).sort((a,b)=>a-b);
+      const pos = Math.max(0, indices.indexOf(selectedDayIndex));
+      selectedDayIndex = indices[Math.min(indices.length - 1, pos + 1)];
+      renderDayView();
+    });
+  }
+
+  if (typeof renderDayView === 'function') renderDayView();
+});
+</script>
+
+</body>
+</html>
